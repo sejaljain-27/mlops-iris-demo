@@ -1,0 +1,45 @@
+SAMPLE OUTPUT ONLY — illustrative example, NOT captured from a live Jenkins job.
+Actual package versions, model comparison results, timestamps, and build status depend on your VM.
+
+Started by user
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/Retrain-ML-Model
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Checking out source code from the configured Git repository (branch: main)
+[Pipeline] }  // Checkout
+[Pipeline] stage
+[Pipeline] { (Set up Python)
++ python3 --version
+Python 3.10.x or 3.11.x
++ python3 -m venv .venv
++ .venv/bin/python -m pip install --upgrade pip
++ .venv/bin/pip install -r requirements.txt
+Successfully installed Flask, PyCaret and required dependencies
+[Pipeline] }  // Set up Python
+[Pipeline] stage
+[Pipeline] { (Train / Retrain Model)
++ .venv/bin/python retrain.py
+Loading Iris dataset...
+Comparing candidate classification models...
+Finalizing selected model...
+Model saved to iris_model.pkl
+Retraining complete. Model artifact saved: iris_model.pkl
++ test -s iris_model.pkl
+[Pipeline] }  // Train / Retrain Model
+[Pipeline] stage
+[Pipeline] { (Smoke Test)
+Model artifact loaded successfully; sample prediction: setosa
+[Pipeline] }  // Smoke Test
+[Pipeline] stage
+[Pipeline] { (Deploy Model Artifact)
++ install -m 0644 iris_model.pkl /home/ubuntu/app/iris_model.pkl
+Model artifact copied to /home/ubuntu/app/iris_model.pkl
+[Pipeline] }  // Deploy Model Artifact
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+
+Reminder: The deploy stage will fail until /home/ubuntu/app exists and the Jenkins service account can write to it. For separate Jenkins and app VMs, replace local copy with SSH-based deployment.
